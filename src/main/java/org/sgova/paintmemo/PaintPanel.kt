@@ -1,18 +1,80 @@
 package org.sgova.paintmemo
 
+import org.sgova.paintmemo.mode.Figure
+import org.sgova.paintmemo.mode.RectangleFigure
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.Graphics
+import java.awt.event.MouseEvent
+import java.awt.event.MouseListener
+import java.awt.event.MouseMotionListener
 import javax.swing.JPanel
 
-class PaintPanel(width: Int, height: Int) : JPanel() {
+class PaintPanel(width: Int, height: Int) : JPanel(), MouseListener, MouseMotionListener {
+	
+	val paper = Paper()
+	
+	var drawingFigure: Figure? = null
+		private set
+	
+	var currentColor: Color = Color.BLACK
 	
 	init {
 		setPreferredSize(Dimension(width, height))
+		setDoubleBuffered(true)
+		
+		addMouseListener(this)
+		addMouseMotionListener(this)
+		
 	}
 	
 	override fun paintComponent(g: Graphics) {
 		g.color = Color.WHITE
 		g.fillRect(0, 0, width, height)
+		
+		// ‚·‚×‚Ä‚Ì}Œ`‚ğ•`‰æ
+		paper.figures.forEach {
+			paintFigure(g, it)
+		}
+		
+		// Œ»İ•`‰æ‚µ‚Ä‚¢‚é}Œ`‚ğƒvƒŒƒrƒ…[
+		if (drawingFigure != null) {
+			paintFigure(g, drawingFigure!!)
+		}
 	}
+	
+	// Figure‚ğ•`‰æ
+	fun paintFigure(g: Graphics, figure: Figure) {
+		g.color = figure.color
+		figure.reshape(g)
+	}
+	
+	override fun mouseReleased(e: MouseEvent) {
+		if (drawingFigure != null) {
+			paper.pushFigure(drawingFigure!!)
+			
+			drawingFigure = null
+			repaint()
+		}
+	}
+	
+	override fun mouseDragged(e: MouseEvent) {
+		drawingFigure?.x = e.x
+		drawingFigure?.y = e.y
+		
+		repaint()
+	}
+
+	override fun mousePressed(e: MouseEvent) {
+		// }Œ`‚ğ‘‚¢‚Ä‚¢‚È‚¯‚ê‚Î}Œ`‚ğ¶¬
+		if (drawingFigure == null) {
+			drawingFigure = RectangleFigure(e.x, e.y, currentColor)
+		}
+	}
+	
+	override fun mouseClicked(e: MouseEvent) {}
+	override fun mouseEntered(e: MouseEvent) {}
+	override fun mouseExited(e: MouseEvent) {}
+	
+	override fun mouseMoved(e: MouseEvent) {}
 }
