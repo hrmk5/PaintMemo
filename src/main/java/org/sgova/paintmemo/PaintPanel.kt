@@ -10,17 +10,18 @@ import java.awt.event.MouseListener
 import java.awt.event.MouseMotionListener
 import javax.swing.JPanel
 
-class PaintPanel(width: Int, height: Int) : JPanel(), MouseListener, MouseMotionListener {
+class PaintPanel() : JPanel(), MouseListener, MouseMotionListener {
 	
 	val paper = Paper()
 	
 	var drawingFigure: Figure? = null
 		private set
 	
+	var createFigure = "rectangle"
 	var currentColor: Color = Color.BLACK
 	
+	
 	init {
-		setPreferredSize(Dimension(width, height))
 		setDoubleBuffered(true)
 		
 		addMouseListener(this)
@@ -68,7 +69,10 @@ class PaintPanel(width: Int, height: Int) : JPanel(), MouseListener, MouseMotion
 	override fun mousePressed(e: MouseEvent) {
 		// }Œ`‚ð‘‚¢‚Ä‚¢‚È‚¯‚ê‚Î}Œ`‚ð¶¬
 		if (drawingFigure == null) {
-			drawingFigure = RectangleFigure(e.x, e.y, currentColor)
+			drawingFigure = when (createFigure) {
+				"rectangle" -> RectangleFigure(e.x, e.y, currentColor)
+				else -> RectangleFigure(e.x + 50, e.y, currentColor)
+			}
 		}
 	}
 	
