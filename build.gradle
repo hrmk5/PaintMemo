@@ -11,7 +11,7 @@ buildscript {
 
 apply plugin: 'kotlin'
 apply plugin: 'application'
-apply plugin: 'eclipse'
+apply plugin: 'idea'
 
 mainClassName = 'org.sgova.paintmemo.PaintMemoKt'
 
@@ -23,5 +23,7 @@ dependencies {
     compile 'org.jetbrains.kotlin:kotlin-stdlib'
     
     compile 'com.google.guava:guava:23.0'
+
+    testCompile 'junit:junit:4.12'
 }
 
