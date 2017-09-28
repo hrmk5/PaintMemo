@@ -32,19 +32,19 @@ class PaintPanel() : JPanel(), MouseListener, MouseMotionListener {
 	override fun paintComponent(g: Graphics) {
 		g.color = Color.WHITE
 		g.fillRect(0, 0, width, height)
-		
-		// ‚·‚×‚Ä‚Ì}Œ`‚ð•`‰æ
+
+        // å›³å½¢ã‚’æç”»
 		paper.figures.forEach {
 			paintFigure(g, it)
 		}
-		
-		// Œ»Ý•`‰æ‚µ‚Ä‚¢‚é}Œ`‚ðƒvƒŒƒrƒ…[
+
+        // æç”»ã™ã‚‹å›³å½¢ã®ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼
 		if (drawingFigure != null) {
 			paintFigure(g, drawingFigure!!)
 		}
 	}
-	
-	// Figure‚ð•`‰æ
+
+    // Figureã‚’æç”»
 	fun paintFigure(g: Graphics, figure: Figure) {
 		g.color = figure.color
 		figure.reshape(g)
@@ -67,11 +67,13 @@ class PaintPanel() : JPanel(), MouseListener, MouseMotionListener {
 	}
 
 	override fun mousePressed(e: MouseEvent) {
-		// }Œ`‚ð‘‚¢‚Ä‚¢‚È‚¯‚ê‚Î}Œ`‚ð¶¬
 		if (drawingFigure == null) {
 			drawingFigure = when (createFigure) {
-				"rectangle" -> RectangleFigure(e.x, e.y, currentColor)
-				else -> RectangleFigure(e.x + 50, e.y, currentColor)
+				"freehand" ->	RectangleFigure(e.x + 50, e.y, currentColor)
+				"rectangle" ->	RectangleFigure(e.x, e.y, currentColor)
+				"triangle" ->	RectangleFigure(e.x + 50, e.y, currentColor)
+				"ellipse" ->	RectangleFigure(e.x + 50, e.y, currentColor)
+				else ->			RectangleFigure(e.x + 50, e.y, currentColor)
 			}
 		}
 	}

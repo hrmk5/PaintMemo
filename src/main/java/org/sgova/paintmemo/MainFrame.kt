@@ -21,8 +21,8 @@ class MainFrame : JFrame() {
 		setDefaultCloseOperation(EXIT_ON_CLOSE)
 		setSize(500, 500)
 		setLayout(layout)
-		
-		// ツールバーを追加
+
+        // 繝�繝ｼ繝ｫ繝舌�ｼ繧定ｿｽ蜉
 		contentPane.add(toolBarPanel, GridBagConstraints().apply {
 			gridx = 0
 			gridy = 0
@@ -30,8 +30,8 @@ class MainFrame : JFrame() {
 			weighty = 0.0
 			fill = GridBagConstraints.BOTH
 		})
-		
-		// 描画パネルを追加
+
+        // 謠冗判繝代ロ繝ｫ繧定ｿｽ蜉
 		contentPane.add(mainPanel, GridBagConstraints().apply {
 			gridx = 0
 			gridy = 1
@@ -40,7 +40,7 @@ class MainFrame : JFrame() {
 			fill = GridBagConstraints.BOTH
 		})
 
-		// Look&Feelを変更
+		// Look&Feel繧貞､画峩
 		val lafClassName = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel"
 		try {
 			UIManager.setLookAndFeel(lafClassName)

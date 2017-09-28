@@ -3,41 +3,71 @@ package org.sgova.paintmemo
 import java.awt.Color
 import java.awt.FlowLayout
 import java.awt.event.ActionEvent
-import java.awt.event.ActionListener
+import java.awt.event.ItemEvent
+import javax.swing.JComboBox
 import javax.swing.JPanel
 import javax.swing.JToggleButton
 
-class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel(), ActionListener {
+class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel() {
 	
 	val layout = FlowLayout()
 	
-	val freehand = JToggleButton("©—R")
-	val rectangle = JToggleButton("lŠp")
-	val triangle = JToggleButton("OŠp")
-	val ellipse = JToggleButton("‰~")
+	val freehand = JToggleButton("è‡ªç”±")
+	val rectangle = JToggleButton("â–¡")
+	val triangle = JToggleButton("â–³")
+	val ellipse = JToggleButton("â—‹")
 	val figures: Array<JToggleButton> = arrayOf(freehand, rectangle, triangle, ellipse)
 	
-	init {
-		val background = Color(235, 235, 235)
-		setBackground(background)
-		
-		figures.forEach {
-			it.background = background
-			it.addActionListener(this)
-			add(it)
+	class ColorItem(val color: Color, val displayName: String) {
+		override fun toString(): String {
+			return displayName
 		}
 	}
 	
-	override fun actionPerformed(e: ActionEvent) {
-		// ì¬‚·‚é}Œ`‚ğ•ÏX
+	val colorBox = JComboBox(arrayOf(
+		ColorItem(Color.BLACK, "é»’"),
+		ColorItem(Color.RED, "èµ¤"),
+		ColorItem(Color.BLUE, "é’"),
+		ColorItem(Color.GREEN, "ç·‘"),
+		ColorItem(Color.YELLOW, "é»„")
+	))
+	
+	init {
+		val background = Color(235, 235, 235)
+		this.background = background
+
+        // å›³å½¢é¸æŠãƒœã‚¿ãƒ³ã®è¨­å®š
+		figures.forEach {
+			it.background = background
+			it.addActionListener(this::onChangeFigure)
+			add(it)
+		}
+
+        // è‰²é¸æŠã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã®è¨­å®š
+		colorBox.maximumSize = colorBox.preferredSize
+		colorBox.background = background
+		colorBox.addItemListener(this::onChangeColor)
+		colorBox.selectedIndex = 0
+		add(colorBox)
+	}
+	
+	fun onChangeColor(e: ItemEvent) {
+		val selectedItem = e.item
+		if (selectedItem is ColorItem) {
+			paintPanel.currentColor = selectedItem.color
+		}
+	}
+	
+	fun onChangeFigure(e: ActionEvent) {
+        // æç”»ã™ã‚‹å›³å½¢ã‚’è¨­å®š
 		when (e.source) {
 			freehand -> 	setCurrentFigure("freehand")
 			rectangle -> 	setCurrentFigure("rectangle")
 			triangle -> 	setCurrentFigure("triangle")
 			ellipse -> 		setCurrentFigure("ellipse")
 		}
-		
-		// ‘¼‚ÌƒgƒOƒ‹ƒ{ƒ^ƒ“‚Ì‘I‘ğ‚ğ‰ğœ
+
+        // ä»–ã®ãƒˆã‚°ãƒ«ãƒœã‚¿ãƒ³ã®é¸æŠã‚’è§£é™¤ã™ã‚‹
 		figures.forEach {
 			if (e.source != it) {
 				it.setSelected(false)
