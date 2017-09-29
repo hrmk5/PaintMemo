@@ -1,23 +1,35 @@
 package org.sgova.paintmemo
 
+import org.sgova.paintmemo.mode.*
 import java.awt.Color
+import java.awt.Dimension
 import java.awt.FlowLayout
 import java.awt.event.ActionEvent
 import java.awt.event.ItemEvent
 import javax.swing.JComboBox
 import javax.swing.JPanel
+import javax.swing.JTextField
 import javax.swing.JToggleButton
 
 class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel() {
 	
 	val layout = FlowLayout()
-	
-	val freehand = JToggleButton("自由")
-	val rectangle = JToggleButton("□")
-	val triangle = JToggleButton("△")
-	val ellipse = JToggleButton("○")
-	val figures: Array<JToggleButton> = arrayOf(freehand, rectangle, triangle, ellipse)
-	
+
+    val drawingText = JTextField(15)
+
+    class FigureButton(displayName: String,
+                       default: Boolean = false,
+                       val create: (x: Int, y: Int, options: FigureOptions) -> Figure) : JToggleButton(displayName) {
+        init {
+            setSelected(default)
+        }
+    }
+
+	val freehand = FigureButton("自由", true) { x, y, options -> FreehandFigure(x, y, options) }
+    val line = FigureButton("／") { x, y, options -> LineFigure(x, y, options) }
+	val rectangle = FigureButton("□") { x, y, options -> RectangleFigure(x, y, options) }
+    val text = FigureButton("文字") { x, y, options -> TextFigure(x, y, drawingText.text, options) }
+	val figures: Array<FigureButton> = arrayOf(freehand, line, rectangle, text)
 	class ColorItem(val color: Color, val displayName: String) {
 		override fun toString(): String {
 			return displayName
@@ -36,6 +48,8 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel() {
 		val background = Color(235, 235, 235)
 		this.background = background
 
+        add(drawingText)
+
         // 図形選択ボタンの設定
 		figures.forEach {
 			it.background = background
@@ -44,7 +58,7 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel() {
 		}
 
         // 色選択コンボボックスの設定
-		colorBox.maximumSize = colorBox.preferredSize
+        colorBox.preferredSize = Dimension(50,19)
 		colorBox.background = background
 		colorBox.addItemListener(this::onChangeColor)
 		colorBox.selectedIndex = 0
@@ -60,12 +74,10 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel() {
 	
 	fun onChangeFigure(e: ActionEvent) {
         // 描画する図形を設定
-		when (e.source) {
-			freehand -> 	setCurrentFigure("freehand")
-			rectangle -> 	setCurrentFigure("rectangle")
-			triangle -> 	setCurrentFigure("triangle")
-			ellipse -> 		setCurrentFigure("ellipse")
-		}
+        val figure: FigureButton? = figures.firstOrNull{ e.source == it }
+        if (figure != null) {
+            setCurrentFigure(figure.create)
+        }
 
         // 他のトグルボタンの選択を解除する
 		figures.forEach {
@@ -75,7 +87,7 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel() {
 		}
 	}
 	
-	fun setCurrentFigure(figureName: String) {
-		paintPanel.createFigure = figureName
+	fun setCurrentFigure(create: (x: Int, y: Int, options: FigureOptions) -> Figure) {
+		paintPanel.createFigure = create
 	}
 }

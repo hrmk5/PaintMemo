@@ -4,7 +4,7 @@ import java.awt.Color
 import java.awt.Graphics
 
 interface Figure {
-	val color: Color
+    val options: FigureOptions
 	var startX: Int
 	var startY: Int
 	var x: Int

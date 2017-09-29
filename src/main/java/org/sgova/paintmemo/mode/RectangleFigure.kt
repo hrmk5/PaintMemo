@@ -3,11 +3,8 @@ package org.sgova.paintmemo.mode
 import java.awt.Color
 import java.awt.Graphics
 
-class RectangleFigure(startX: Int, startY: Int, color: Color) : Figure {
+class RectangleFigure(override var startX: Int, override var startY: Int, override val options: FigureOptions) : Figure {
 	
-	override val color = color
-	override var startX = startX
-	override var startY = startY
 	override var x: Int = -1
 	override var y: Int = -1
 	
