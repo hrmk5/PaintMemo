@@ -6,14 +6,13 @@ import java.awt.Dimension
 import java.awt.FlowLayout
 import java.awt.event.ActionEvent
 import java.awt.event.ItemEvent
-import javax.swing.JComboBox
-import javax.swing.JPanel
-import javax.swing.JTextField
-import javax.swing.JToggleButton
+import javax.swing.*
+import javax.swing.event.DocumentEvent
+import javax.swing.event.DocumentListener
 
-class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel() {
-	
-	val layout = FlowLayout()
+class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel(), DocumentListener {
+
+    val layout = FlowLayout()
 
     val drawingText = JTextField(15)
 
@@ -21,7 +20,7 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel() {
                        default: Boolean = false,
                        val create: (x: Int, y: Int, options: FigureOptions) -> Figure) : JToggleButton(displayName) {
         init {
-            setSelected(default)
+            isSelected = default
         }
     }
 
@@ -43,6 +42,10 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel() {
 		ColorItem(Color.GREEN, "緑"),
 		ColorItem(Color.YELLOW, "黄")
 	))
+
+    val strokeBox = JTextField("2", 2).also {
+        it.document.addDocumentListener(this)
+    }
 	
 	init {
 		val background = Color(235, 235, 235)
@@ -63,6 +66,8 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel() {
 		colorBox.addItemListener(this::onChangeColor)
 		colorBox.selectedIndex = 0
 		add(colorBox)
+
+        add(strokeBox)
 	}
 	
 	fun onChangeColor(e: ItemEvent) {
@@ -82,7 +87,7 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel() {
         // 他のトグルボタンの選択を解除する
 		figures.forEach {
 			if (e.source != it) {
-				it.setSelected(false)
+                it.isSelected = false
 			}
 		}
 	}
@@ -90,4 +95,15 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel() {
 	fun setCurrentFigure(create: (x: Int, y: Int, options: FigureOptions) -> Figure) {
 		paintPanel.createFigure = create
 	}
+
+    fun onStrokeChanged() {
+        val stroke = strokeBox.text.toIntOrNull()
+        if (stroke != null) {
+            paintPanel.currentStroke = stroke
+        }
+    }
+
+    override fun removeUpdate(e: DocumentEvent?) = onStrokeChanged()
+    override fun insertUpdate(e: DocumentEvent?) = onStrokeChanged()
+    override fun changedUpdate(e: DocumentEvent?) = onStrokeChanged()
 }

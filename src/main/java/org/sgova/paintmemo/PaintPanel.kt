@@ -16,7 +16,7 @@ class PaintPanel() : JPanel(), MouseListener, MouseMotionListener {
 
     var createFigure: (x: Int, y: Int, options: FigureOptions) -> Figure = fun(x, y, options) = FreehandFigure(x, y, options)
 	var currentColor: Color = Color.BLACK
-    var currentStroke: Int = 1
+    var currentStroke: Int = 2
 	
 	init {
 		setDoubleBuffered(true)
