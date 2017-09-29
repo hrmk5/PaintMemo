@@ -2,6 +2,7 @@ package org.sgova.paintmemo
 
 import org.sgova.paintmemo.mode.*
 import java.awt.Color
+import java.awt.Dimension
 import java.awt.FlowLayout
 import java.awt.event.ActionEvent
 import java.awt.event.ItemEvent
@@ -13,7 +14,7 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel() {
 	
 	val layout = FlowLayout()
 
-    class FigureButton(val displayName: String,
+    class FigureButton(displayName: String,
                        default: Boolean = false,
                        val create: (x: Int, y: Int, options: FigureOptions) -> Figure) : JToggleButton(displayName) {
         init {
@@ -54,7 +55,7 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel() {
 		}
 
         // 色選択コンボボックスの設定
-		colorBox.maximumSize = colorBox.preferredSize
+        colorBox.preferredSize = Dimension(50,19)
 		colorBox.background = background
 		colorBox.addItemListener(this::onChangeColor)
 		colorBox.selectedIndex = 0
@@ -70,18 +71,9 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel() {
 	
 	fun onChangeFigure(e: ActionEvent) {
         // 描画する図形を設定
-		/*when (e.source) {
-			freehand -> 	setCurrentFigure("freehand")
-			rectangle -> 	setCurrentFigure("rectangle")
-			triangle -> 	setCurrentFigure("triangle")
-			ellipse -> 		setCurrentFigure("ellipse")
-            line ->         setCurrentFigure("line")
-        }*/
-
-        // 描画する図形を設定
         val figure: FigureButton? = figures.firstOrNull{ e.source == it }
         if (figure != null) {
-            setCurrentFigure(figure?.create)
+            setCurrentFigure(figure.create)
         }
 
         // 他のトグルボタンの選択を解除する
