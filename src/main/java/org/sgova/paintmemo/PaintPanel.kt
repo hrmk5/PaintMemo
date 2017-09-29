@@ -1,11 +1,7 @@
 package org.sgova.paintmemo
 
-import org.sgova.paintmemo.mode.Figure
-import org.sgova.paintmemo.mode.FreehandFigure
-import org.sgova.paintmemo.mode.RectangleFigure
-import java.awt.Color
-import java.awt.Dimension
-import java.awt.Graphics
+import org.sgova.paintmemo.mode.*
+import java.awt.*
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
 import java.awt.event.MouseMotionListener
@@ -17,20 +13,21 @@ class PaintPanel() : JPanel(), MouseListener, MouseMotionListener {
 	
 	var drawingFigure: Figure? = null
 		private set
-	
-	var createFigure = "rectangle"
+
+    var createFigure: (x: Int, y: Int, options: FigureOptions) -> Figure = fun(x, y, options) = FreehandFigure(x, y, options)
 	var currentColor: Color = Color.BLACK
-	
+    var currentStroke: Int = 1
 	
 	init {
 		setDoubleBuffered(true)
 		
 		addMouseListener(this)
 		addMouseMotionListener(this)
-		
 	}
 	
-	override fun paintComponent(g: Graphics) {
+	override fun paintComponent(g1: Graphics) {
+        val g = g1 as Graphics2D
+
 		g.color = Color.WHITE
 		g.fillRect(0, 0, width, height)
 
@@ -46,8 +43,9 @@ class PaintPanel() : JPanel(), MouseListener, MouseMotionListener {
 	}
 
     // Figureを描画
-	fun paintFigure(g: Graphics, figure: Figure) {
-		g.color = currentColor
+	fun paintFigure(g: Graphics2D, figure: Figure) {
+		g.color = figure.options.color
+        g.stroke = BasicStroke(figure.options.stroke.toFloat())
 		figure.reshape(g)
 	}
 	
@@ -69,13 +67,8 @@ class PaintPanel() : JPanel(), MouseListener, MouseMotionListener {
 
 	override fun mousePressed(e: MouseEvent) {
 		if (drawingFigure == null) {
-			drawingFigure = when (createFigure) {
-                "freehand" ->   FreehandFigure(e.x, e.y)
-				"rectangle" ->	RectangleFigure(e.x, e.y)
-				"triangle" ->	RectangleFigure(e.x + 50, e.y)
-				"ellipse" ->	RectangleFigure(e.x + 50, e.y)
-				else ->			RectangleFigure(e.x + 50, e.y)
-			}
+            val options = FigureOptions(currentColor, currentStroke)
+            drawingFigure = createFigure(e.x, e.y, options)
 		}
 	}
 	

@@ -5,6 +5,7 @@ import org.sgova.paintmemo.mode.RectangleFigure
 import java.awt.Color
 
 import org.junit.Assert.assertEquals
+import org.sgova.paintmemo.mode.FigureOptions
 
 class PaperTest {
 
@@ -12,7 +13,7 @@ class PaperTest {
 
     @Test
     fun testPushFigure() {
-        val figure = RectangleFigure(0, 0)
+        val figure = RectangleFigure(0, 0, FigureOptions(Color.BLACK, 1))
         paper.pushFigure(figure)
 
         assertEquals(paper.figures[0], figure)

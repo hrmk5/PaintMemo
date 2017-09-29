@@ -1,5 +1,6 @@
 package org.sgova.paintmemo
 
+import org.sgova.paintmemo.mode.*
 import java.awt.Color
 import java.awt.FlowLayout
 import java.awt.event.ActionEvent
@@ -11,12 +12,21 @@ import javax.swing.JToggleButton
 class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel() {
 	
 	val layout = FlowLayout()
-	
-	val freehand = JToggleButton("自由")
-	val rectangle = JToggleButton("□")
-	val triangle = JToggleButton("△")
-	val ellipse = JToggleButton("○")
-	val figures: Array<JToggleButton> = arrayOf(freehand, rectangle, triangle, ellipse)
+
+    class FigureButton(val displayName: String,
+                       default: Boolean = false,
+                       val create: (x: Int, y: Int, options: FigureOptions) -> Figure) : JToggleButton(displayName) {
+        init {
+            setSelected(default)
+        }
+    }
+
+	val freehand = FigureButton("自由", true) { x, y, options -> FreehandFigure(x, y, options) }
+    val line = FigureButton("／") { x, y, options -> LineFigure(x, y, options) }
+	val rectangle = FigureButton("□") { x, y, options -> RectangleFigure(x, y, options) }
+	val triangle = FigureButton("△") { x, y, options -> RectangleFigure(x, y, options) }
+	val ellipse = FigureButton("○") { x, y, options -> RectangleFigure(x, y, options) }
+	val figures: Array<FigureButton> = arrayOf(freehand, line, rectangle, triangle, ellipse)
 	
 	class ColorItem(val color: Color, val displayName: String) {
 		override fun toString(): String {
@@ -60,12 +70,19 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel() {
 	
 	fun onChangeFigure(e: ActionEvent) {
         // 描画する図形を設定
-		when (e.source) {
+		/*when (e.source) {
 			freehand -> 	setCurrentFigure("freehand")
 			rectangle -> 	setCurrentFigure("rectangle")
 			triangle -> 	setCurrentFigure("triangle")
 			ellipse -> 		setCurrentFigure("ellipse")
-		}
+            line ->         setCurrentFigure("line")
+        }*/
+
+        // 描画する図形を設定
+        val figure: FigureButton? = figures.firstOrNull{ e.source == it }
+        if (figure != null) {
+            setCurrentFigure(figure?.create)
+        }
 
         // 他のトグルボタンの選択を解除する
 		figures.forEach {
@@ -75,7 +92,7 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel() {
 		}
 	}
 	
-	fun setCurrentFigure(figureName: String) {
-		paintPanel.createFigure = figureName
+	fun setCurrentFigure(create: (x: Int, y: Int, options: FigureOptions) -> Figure) {
+		paintPanel.createFigure = create
 	}
 }

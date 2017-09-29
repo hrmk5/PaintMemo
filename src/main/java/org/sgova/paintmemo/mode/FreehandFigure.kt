@@ -3,7 +3,7 @@ package org.sgova.paintmemo.mode
 import java.awt.Graphics
 import java.awt.Point
 
-class FreehandFigure(override var startX: Int, override var startY: Int) : Figure {
+class FreehandFigure(override var startX: Int, override var startY: Int, override val options: FigureOptions) : Figure {
 
     override var x: Int = -1
     override var y: Int = -1
