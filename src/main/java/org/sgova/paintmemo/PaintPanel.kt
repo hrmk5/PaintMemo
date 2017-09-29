@@ -1,6 +1,7 @@
 package org.sgova.paintmemo
 
 import org.sgova.paintmemo.mode.Figure
+import org.sgova.paintmemo.mode.FreehandFigure
 import org.sgova.paintmemo.mode.RectangleFigure
 import java.awt.Color
 import java.awt.Dimension
@@ -46,7 +47,7 @@ class PaintPanel() : JPanel(), MouseListener, MouseMotionListener {
 
     // Figureを描画
 	fun paintFigure(g: Graphics, figure: Figure) {
-		g.color = figure.color
+		g.color = currentColor
 		figure.reshape(g)
 	}
 	
@@ -69,11 +70,11 @@ class PaintPanel() : JPanel(), MouseListener, MouseMotionListener {
 	override fun mousePressed(e: MouseEvent) {
 		if (drawingFigure == null) {
 			drawingFigure = when (createFigure) {
-				"freehand" ->	RectangleFigure(e.x + 50, e.y, currentColor)
-				"rectangle" ->	RectangleFigure(e.x, e.y, currentColor)
-				"triangle" ->	RectangleFigure(e.x + 50, e.y, currentColor)
-				"ellipse" ->	RectangleFigure(e.x + 50, e.y, currentColor)
-				else ->			RectangleFigure(e.x + 50, e.y, currentColor)
+                "freehand" ->   FreehandFigure(e.x, e.y)
+				"rectangle" ->	RectangleFigure(e.x, e.y)
+				"triangle" ->	RectangleFigure(e.x + 50, e.y)
+				"ellipse" ->	RectangleFigure(e.x + 50, e.y)
+				else ->			RectangleFigure(e.x + 50, e.y)
 			}
 		}
 	}

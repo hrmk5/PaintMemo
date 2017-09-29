@@ -12,7 +12,7 @@ class PaperTest {
 
     @Test
     fun testPushFigure() {
-        val figure = RectangleFigure(0, 0, Color.CYAN)
+        val figure = RectangleFigure(0, 0)
         paper.pushFigure(figure)
 
         assertEquals(paper.figures[0], figure)
