@@ -8,11 +8,14 @@ import java.awt.event.ActionEvent
 import java.awt.event.ItemEvent
 import javax.swing.JComboBox
 import javax.swing.JPanel
+import javax.swing.JTextField
 import javax.swing.JToggleButton
 
 class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel() {
 	
 	val layout = FlowLayout()
+
+    val drawingText = JTextField(15)
 
     class FigureButton(displayName: String,
                        default: Boolean = false,
@@ -25,10 +28,8 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel() {
 	val freehand = FigureButton("自由", true) { x, y, options -> FreehandFigure(x, y, options) }
     val line = FigureButton("／") { x, y, options -> LineFigure(x, y, options) }
 	val rectangle = FigureButton("□") { x, y, options -> RectangleFigure(x, y, options) }
-	val triangle = FigureButton("△") { x, y, options -> RectangleFigure(x, y, options) }
-	val ellipse = FigureButton("○") { x, y, options -> RectangleFigure(x, y, options) }
-	val figures: Array<FigureButton> = arrayOf(freehand, line, rectangle, triangle, ellipse)
-	
+    val text = FigureButton("文字") { x, y, options -> TextFigure(x, y, drawingText.text, options) }
+	val figures: Array<FigureButton> = arrayOf(freehand, line, rectangle, text)
 	class ColorItem(val color: Color, val displayName: String) {
 		override fun toString(): String {
 			return displayName
@@ -46,6 +47,8 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel() {
 	init {
 		val background = Color(235, 235, 235)
 		this.background = background
+
+        add(drawingText)
 
         // 図形選択ボタンの設定
 		figures.forEach {
