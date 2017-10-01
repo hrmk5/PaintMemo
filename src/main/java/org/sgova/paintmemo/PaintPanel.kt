@@ -17,18 +17,33 @@ class PaintPanel() : JPanel(), MouseListener, MouseMotionListener {
     var createFigure: (x: Int, y: Int, options: FigureOptions) -> Figure = fun(x, y, options) = FreehandFigure(x, y, options)
 	var currentColor: Color = Color.BLACK
     var currentStroke: Int = 2
-	
+    var currentBackgroundColor = Color.WHITE
+    val transparentBackgroundColor = Color(235, 235, 235) // 背景が透明の時の背景色
+
+    fun setCurrentBackground(color: Color) {
+        currentBackgroundColor = color
+        repaint()
+    }
+
 	init {
 		setDoubleBuffered(true)
-		
+
 		addMouseListener(this)
 		addMouseMotionListener(this)
 	}
-	
+
 	override fun paintComponent(g1: Graphics) {
         val g = g1 as Graphics2D
 
-		g.color = Color.WHITE
+        g.clearRect(0, 0, width, height)
+
+        // 背景が透明だった場合の背景色
+        if (currentBackgroundColor.alpha <= 0) {
+            g.color = transparentBackgroundColor
+            g.fillRect(0, 0, width, height)
+        }
+
+		g.color = currentBackgroundColor
 		g.fillRect(0, 0, width, height)
 
         // 図形を描画
@@ -58,20 +73,20 @@ class PaintPanel() : JPanel(), MouseListener, MouseMotionListener {
         paper.redo()
         repaint()
     }
-	
+
 	override fun mouseReleased(e: MouseEvent) {
 		if (drawingFigure != null) {
 			paper.pushFigure(drawingFigure!!)
-			
+
 			drawingFigure = null
 			repaint()
 		}
 	}
-	
+
 	override fun mouseDragged(e: MouseEvent) {
 		drawingFigure?.x = e.x
 		drawingFigure?.y = e.y
-		
+
 		repaint()
 	}
 
@@ -81,10 +96,10 @@ class PaintPanel() : JPanel(), MouseListener, MouseMotionListener {
             drawingFigure = createFigure(e.x, e.y, options)
 		}
 	}
-	
+
 	override fun mouseClicked(e: MouseEvent) {}
 	override fun mouseEntered(e: MouseEvent) {}
 	override fun mouseExited(e: MouseEvent) {}
-	
+
 	override fun mouseMoved(e: MouseEvent) {}
 }

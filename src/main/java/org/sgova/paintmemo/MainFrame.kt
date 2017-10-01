@@ -9,8 +9,8 @@ import javax.swing.UIManager
 
 class MainFrame : JFrame() {
 
-    val WIDTH = 600
-	val HEIGHT = 500
+    val WIDTH = 650
+	val HEIGHT = 550
 	
 	val mainPanel = PaintPanel()
 	val toolBarPanel = ToolBarPanel(mainPanel)
@@ -21,6 +21,7 @@ class MainFrame : JFrame() {
         defaultCloseOperation = EXIT_ON_CLOSE
         size = Dimension(WIDTH, HEIGHT)
         layout = mainlayout
+        setLocationRelativeTo(null)
 
         // ツールバーを追加
 		contentPane.add(toolBarPanel, GridBagConstraints().apply {
