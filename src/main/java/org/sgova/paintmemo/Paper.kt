@@ -6,19 +6,28 @@ import java.util.Stack
 class Paper() {
 	
 	val figures = Stack<Figure>()
+    val redoFigures = Stack<Figure>()
 	
 	fun pushFigure(figure: Figure) {
 		figures.push(figure)
+
+        if (!redoFigures.empty()) {
+            redoFigures.clear()
+        }
 	}
 	
-	@Deprecated("Not Implemented")
 	fun undo() {
-		
+        if (!figures.empty()) {
+            val figure = figures.pop()
+            redoFigures.push(figure)
+        }
 	}
 	
-	@Deprecated("Not Implemented")
 	fun redo() {
-		
+        if (!redoFigures.empty()) {
+            val figure = redoFigures.pop()
+            figures.push(figure)
+        }
 	}
 	
 }

@@ -48,6 +48,16 @@ class PaintPanel() : JPanel(), MouseListener, MouseMotionListener {
         g.stroke = BasicStroke(figure.options.stroke.toFloat())
 		figure.reshape(g)
 	}
+
+    fun undo() {
+        paper.undo()
+        repaint()
+    }
+
+    fun redo() {
+        paper.redo()
+        repaint()
+    }
 	
 	override fun mouseReleased(e: MouseEvent) {
 		if (drawingFigure != null) {

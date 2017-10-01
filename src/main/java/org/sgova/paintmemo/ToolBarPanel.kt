@@ -3,9 +3,12 @@ package org.sgova.paintmemo
 import org.sgova.paintmemo.mode.*
 import java.awt.Color
 import java.awt.Dimension
+import java.awt.Event
 import java.awt.FlowLayout
 import java.awt.event.ActionEvent
 import java.awt.event.ItemEvent
+import java.awt.event.KeyEvent
+import java.awt.event.KeyListener
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
@@ -46,10 +49,34 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel(), DocumentListe
     val strokeBox = JTextField("2", 2).also {
         it.document.addDocumentListener(this)
     }
-	
+
+    val undoButton = JButton("↲").also {
+        // ショートカットキーの設定
+        it.actionMap.put("undo", object : AbstractAction("undo") {
+            override fun actionPerformed(e: ActionEvent?) = undo(e)
+        })
+        it.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_MASK), "undo")
+
+        // 動作の設定
+        it.addActionListener(this::undo)
+    }
+    val redoButton = JButton("↱").also {
+        // ショートカットキーの設定
+        it.actionMap.put("redo", object : AbstractAction("redo") {
+            override fun actionPerformed(e: ActionEvent?) = redo(e)
+        })
+        it.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_MASK), "redo")
+
+        // 動作の設定
+        it.addActionListener(this::redo)
+    }
+
 	init {
 		val background = Color(235, 235, 235)
 		this.background = background
+
+        add(undoButton)
+        add(redoButton)
 
         add(drawingText)
 
@@ -101,6 +128,16 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel(), DocumentListe
         if (stroke != null) {
             paintPanel.currentStroke = stroke
         }
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun undo(e: ActionEvent?) {
+        paintPanel.undo()
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun redo(e: ActionEvent?) {
+        paintPanel.redo()
     }
 
     override fun removeUpdate(e: DocumentEvent?) = onStrokeChanged()

@@ -1,26 +1,26 @@
 package org.sgova.paintmemo
 
+import java.awt.Dimension
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import javax.swing.JFrame
-import javax.swing.JPanel
 import javax.swing.SwingUtilities
 import javax.swing.UIManager
 
 class MainFrame : JFrame() {
-	
-	val WIDTH = 500
+
+    val WIDTH = 600
 	val HEIGHT = 500
 	
 	val mainPanel = PaintPanel()
 	val toolBarPanel = ToolBarPanel(mainPanel)
-	val layout = GridBagLayout()
+	val mainlayout = GridBagLayout()
 	
 	init {
-		setTitle("PaintMemo")
-		setDefaultCloseOperation(EXIT_ON_CLOSE)
-		setSize(500, 500)
-		setLayout(layout)
+        title = "PaintMemo"
+        defaultCloseOperation = EXIT_ON_CLOSE
+        size = Dimension(WIDTH, HEIGHT)
+        layout = mainlayout
 
         // ツールバーを追加
 		contentPane.add(toolBarPanel, GridBagConstraints().apply {
@@ -49,7 +49,7 @@ class MainFrame : JFrame() {
 			System.err.println("Error setting look and feel " + lafClassName)
 			System.err.println(e.stackTrace)
 		}
-		
-		setVisible(true)
+
+        isVisible = true
 	}
 }
