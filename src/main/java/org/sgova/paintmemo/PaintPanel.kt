@@ -2,14 +2,12 @@ package org.sgova.paintmemo
 
 import org.sgova.paintmemo.mode.*
 import java.awt.*
-import java.awt.event.MouseEvent
-import java.awt.event.MouseListener
-import java.awt.event.MouseMotionListener
+import java.awt.event.*
 import javax.swing.JPanel
 
-class PaintPanel() : JPanel(), MouseListener, MouseMotionListener {
-	
-	val paper = Paper()
+class PaintPanel() : JPanel(), MouseListener, MouseMotionListener, KeyListener {
+
+    val paper = Paper()
 	
 	var drawingFigure: Figure? = null
 		private set
@@ -20,16 +18,21 @@ class PaintPanel() : JPanel(), MouseListener, MouseMotionListener {
     var currentBackgroundColor = Color.WHITE
     val transparentBackgroundColor = Color(235, 235, 235) // 背景が透明の時の背景色
 
+    var isOnlyVerticalLine = false
+    var isOnlyHorizontalLine = false
+
     fun setCurrentBackground(color: Color) {
         currentBackgroundColor = color
         repaint()
     }
 
 	init {
-		setDoubleBuffered(true)
+        isDoubleBuffered = true
+        isFocusable = true
 
 		addMouseListener(this)
 		addMouseMotionListener(this)
+        addKeyListener(this)
 	}
 
 	override fun paintComponent(g1: Graphics) {
@@ -81,22 +84,50 @@ class PaintPanel() : JPanel(), MouseListener, MouseMotionListener {
 			drawingFigure = null
 			repaint()
 		}
+
+        requestFocus()
 	}
 
 	override fun mouseDragged(e: MouseEvent) {
-		drawingFigure?.x = e.x
-		drawingFigure?.y = e.y
+        if (drawingFigure != null) {
+            // isOnlyVerticalLineがtrueならx座標を固定する
+            if (!isOnlyVerticalLine) {
+                drawingFigure?.x = e.x
+            } else {
+                drawingFigure?.x = drawingFigure?.startX!!
+            }
+            // isOnlyHorizontalLineがtrueならy座標を固定する
+            if (!isOnlyHorizontalLine) {
+                drawingFigure?.y = e.y
+            } else {
+                drawingFigure?.y = drawingFigure?.startY!!
+            }
 
-		repaint()
+            repaint()
+        }
 	}
 
 	override fun mousePressed(e: MouseEvent) {
-		if (drawingFigure == null) {
+        if (drawingFigure == null) {
             val options = FigureOptions(currentColor, currentStroke)
             drawingFigure = createFigure(e.x, e.y, options)
-		}
-	}
+        }
+    }
 
+	override fun keyReleased(e: KeyEvent?) {
+        isOnlyVerticalLine = false
+        isOnlyHorizontalLine = false
+    }
+
+    override fun keyPressed(e: KeyEvent?) {
+        if (e?.keyCode == KeyEvent.VK_CONTROL) {
+            isOnlyVerticalLine = true
+        } else if (e?.keyCode == KeyEvent.VK_ALT) {
+            isOnlyHorizontalLine = true
+        }
+    }
+
+    override fun keyTyped(e: KeyEvent?) {}
 	override fun mouseClicked(e: MouseEvent) {}
 	override fun mouseEntered(e: MouseEvent) {}
 	override fun mouseExited(e: MouseEvent) {}
