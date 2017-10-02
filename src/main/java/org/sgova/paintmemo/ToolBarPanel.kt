@@ -1,6 +1,9 @@
 package org.sgova.paintmemo
 
+import com.google.common.collect.Iterables
 import org.sgova.paintmemo.mode.*
+import org.sgova.paintmemo.save.FigureImageWriter
+import org.sgova.paintmemo.save.FigureWriter
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.Event
@@ -88,6 +91,11 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel(), DocumentListe
         it.preferredSize = Dimension(60, 19)
     }
 
+    // 保存ボタン
+    val saveButton = JButton("保存").also {
+        it.addActionListener(this::save)
+    }
+
 	init {
 		val background = Color(235, 235, 235)
 		this.background = background
@@ -118,6 +126,9 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel(), DocumentListe
 
         // 背景色選択
         add(backgroundColorBox)
+
+        // 保存ボタン
+        add(saveButton)
 	}
 	
 	fun onChangeColor(e: ItemEvent) {
@@ -168,6 +179,32 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel(), DocumentListe
     @Suppress("UNUSED_PARAMETER")
     fun redo(e: ActionEvent?) {
         paintPanel.redo()
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun save(e: ActionEvent) {
+        val chooser = JFileChooser()
+
+        val selected = chooser.showSaveDialog(this)
+        if (selected == JFileChooser.APPROVE_OPTION) {
+            val file = chooser.selectedFile
+            val figureWriter = createFigureWriter(file.getAbsolutePath())
+
+            figureWriter.write(paintPanel.width, paintPanel.height, Iterables.toArray(paintPanel.paper.figures, Figure::class.java), file)
+        }
+    }
+    
+    private fun endsWith(filepath: String, ends: String): Boolean {
+        return filepath.toUpperCase().endsWith(ends)
+    }
+
+    fun createFigureWriter(filepath: String): FigureWriter {
+        return when {
+            endsWith(filepath, ".jpg") || endsWith(filepath, ".jpeg") -> FigureImageWriter(FigureImageWriter.Type.JPEG)
+            endsWith(filepath, ".png") -> FigureImageWriter(FigureImageWriter.Type.PNG)
+            endsWith(filepath, ".gif") -> FigureImageWriter(FigureImageWriter.Type.GIF)
+            else -> FigureImageWriter(FigureImageWriter.Type.JPEG)
+        }
     }
 
     override fun removeUpdate(e: DocumentEvent?) = onStrokeChanged()
