@@ -9,7 +9,7 @@ import javax.swing.UIManager
 
 class MainFrame : JFrame() {
 
-    val WIDTH = 650
+    val WIDTH = 700
 	val HEIGHT = 550
 	
 	val mainPanel = PaintPanel()

@@ -32,7 +32,7 @@ class ImageFigureWriterTest : ExternalResource() {
     }
 
     fun createWriter(type: FigureImageWriter.Type) {
-        writer = FigureImageWriter(type)
+        writer = FigureImageWriter(type, Color.WHITE)
     }
 
     @Test

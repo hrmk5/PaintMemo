@@ -12,9 +12,16 @@ import java.awt.event.ActionEvent
 import java.awt.event.ItemEvent
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
+import java.awt.image.BufferedImage
+import javax.imageio.ImageIO
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
+import java.awt.image.WritableRaster
+import java.awt.image.ColorModel
+import java.awt.image.PixelGrabber
+import java.util.*
+
 
 class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel(), DocumentListener {
 
@@ -200,10 +207,10 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel(), DocumentListe
 
     fun createFigureWriter(filepath: String): FigureWriter {
         return when {
-            endsWith(filepath, ".jpg") || endsWith(filepath, ".jpeg") -> FigureImageWriter(FigureImageWriter.Type.JPEG)
-            endsWith(filepath, ".png") -> FigureImageWriter(FigureImageWriter.Type.PNG)
-            endsWith(filepath, ".gif") -> FigureImageWriter(FigureImageWriter.Type.GIF)
-            else -> FigureImageWriter(FigureImageWriter.Type.JPEG)
+            endsWith(filepath, ".jpg") || endsWith(filepath, ".jpeg") -> FigureImageWriter(FigureImageWriter.Type.JPEG, paintPanel.currentBackgroundColor)
+            endsWith(filepath, ".png") -> FigureImageWriter(FigureImageWriter.Type.PNG, paintPanel.currentBackgroundColor)
+            endsWith(filepath, ".gif") -> FigureImageWriter(FigureImageWriter.Type.GIF, paintPanel.currentBackgroundColor)
+            else -> FigureImageWriter(FigureImageWriter.Type.JPEG, paintPanel.currentBackgroundColor)
         }
     }
 
