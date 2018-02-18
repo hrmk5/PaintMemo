@@ -38,26 +38,26 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel(), DocumentListe
     }
 
     // 描画する図形を選択
-	val freehand = FigureButton("自由", true) { x, y, options -> FreehandFigure(x, y, options) }
+    val freehand = FigureButton("自由", true) { x, y, options -> FreehandFigure(x, y, options) }
     val line = FigureButton("／") { x, y, options -> LineFigure(x, y, options) }
-	val rectangle = FigureButton("□") { x, y, options -> RectangleFigure(x, y, options) }
+    val rectangle = FigureButton("□") { x, y, options -> RectangleFigure(x, y, options) }
     val text = FigureButton("文字") { x, y, options -> TextFigure(x, y, drawingText.text, options) }
-	val figures: Array<FigureButton> = arrayOf(freehand, line, rectangle, text)
-	class ColorItem(val color: Color, val displayName: String) {
-		override fun toString(): String {
-			return displayName
-		}
-	}
+    val figures: Array<FigureButton> = arrayOf(freehand, line, rectangle, text)
+    class ColorItem(val color: Color, val displayName: String) {
+        override fun toString(): String {
+            return displayName
+        }
+    }
 
     // 色を変更するコンボボックス
-	val colorBox = JComboBox(arrayOf(
-		ColorItem(Color.BLACK, "黒"),
-		ColorItem(Color.RED, "赤"),
-		ColorItem(Color.BLUE, "青"),
-		ColorItem(Color.GREEN, "緑"),
-		ColorItem(Color.YELLOW, "黄"),
+    val colorBox = JComboBox(arrayOf(
+        ColorItem(Color.BLACK, "黒"),
+        ColorItem(Color.RED, "赤"),
+        ColorItem(Color.BLUE, "青"),
+        ColorItem(Color.GREEN, "緑"),
+        ColorItem(Color.YELLOW, "黄"),
         ColorItem(Color.WHITE, "白")
-	))
+    ))
 
     // 線の太さを変更するコンボボックス
     val strokeBox = JTextField("2", 2).also {
@@ -103,9 +103,9 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel(), DocumentListe
         it.addActionListener(this::save)
     }
 
-	init {
-		val background = Color(235, 235, 235)
-		this.background = background
+    init {
+        val background = Color(235, 235, 235)
+        this.background = background
 
         // undo,redoボタン
         add(undoButton)
@@ -115,18 +115,18 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel(), DocumentListe
         add(drawingText)
 
         // 図形選択ボタンの設定
-		figures.forEach {
-			it.background = background
-			it.addActionListener(this::onChangeFigure)
-			add(it)
-		}
+        figures.forEach {
+            it.background = background
+            it.addActionListener(this::onChangeFigure)
+            add(it)
+        }
 
         // 色選択コンボボックスの設定
         colorBox.preferredSize = Dimension(50,19)
-		colorBox.background = background
-		colorBox.addItemListener(this::onChangeColor)
-		colorBox.selectedIndex = 0
-		add(colorBox)
+        colorBox.background = background
+        colorBox.addItemListener(this::onChangeColor)
+        colorBox.selectedIndex = 0
+        add(colorBox)
 
         // 線の太さ
         add(strokeBox)
@@ -136,14 +136,14 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel(), DocumentListe
 
         // 保存ボタン
         add(saveButton)
-	}
-	
-	fun onChangeColor(e: ItemEvent) {
-		val selectedItem = e.item
-		if (selectedItem is ColorItem) {
-			paintPanel.currentColor = selectedItem.color
-		}
-	}
+    }
+    
+    fun onChangeColor(e: ItemEvent) {
+        val selectedItem = e.item
+        if (selectedItem is ColorItem) {
+            paintPanel.currentColor = selectedItem.color
+        }
+    }
 
     fun onChangeBackgroundColor(e: ItemEvent) {
         val selectedItem = e.item
@@ -151,8 +151,8 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel(), DocumentListe
             paintPanel.setCurrentBackground(selectedItem.color)
         }
     }
-	
-	fun onChangeFigure(e: ActionEvent) {
+    
+    fun onChangeFigure(e: ActionEvent) {
         // 描画する図形を設定
         val figure: FigureButton? = figures.firstOrNull{ e.source == it }
         if (figure != null) {
@@ -160,16 +160,16 @@ class ToolBarPanel(private val paintPanel: PaintPanel) : JPanel(), DocumentListe
         }
 
         // 他のトグルボタンの選択を解除する
-		figures.forEach {
-			if (e.source != it) {
+        figures.forEach {
+            if (e.source != it) {
                 it.isSelected = false
-			}
-		}
-	}
-	
-	fun setCurrentFigure(create: (x: Int, y: Int, options: FigureOptions) -> Figure) {
-		paintPanel.createFigure = create
-	}
+            }
+        }
+    }
+    
+    fun setCurrentFigure(create: (x: Int, y: Int, options: FigureOptions) -> Figure) {
+        paintPanel.createFigure = create
+    }
 
     fun onStrokeChanged() {
         val stroke = strokeBox.text.toIntOrNull()

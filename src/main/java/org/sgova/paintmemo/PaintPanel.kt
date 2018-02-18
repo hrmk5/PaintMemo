@@ -8,12 +8,12 @@ import javax.swing.JPanel
 class PaintPanel() : JPanel(), MouseListener, MouseMotionListener, KeyListener {
 
     val paper = Paper()
-	
-	var drawingFigure: Figure? = null
-		private set
+    
+    var drawingFigure: Figure? = null
+        private set
 
     var createFigure: (x: Int, y: Int, options: FigureOptions) -> Figure = fun(x, y, options) = FreehandFigure(x, y, options)
-	var currentColor: Color = Color.BLACK
+    var currentColor: Color = Color.BLACK
     var currentStroke: Int = 2
     var currentBackgroundColor = Color.WHITE
     val transparentBackgroundColor = Color(235, 235, 235) // 背景が透明の時の背景色
@@ -26,16 +26,16 @@ class PaintPanel() : JPanel(), MouseListener, MouseMotionListener, KeyListener {
         repaint()
     }
 
-	init {
+    init {
         isDoubleBuffered = true
         isFocusable = true
 
-		addMouseListener(this)
-		addMouseMotionListener(this)
+        addMouseListener(this)
+        addMouseMotionListener(this)
         addKeyListener(this)
-	}
+    }
 
-	override fun paintComponent(g1: Graphics) {
+    override fun paintComponent(g1: Graphics) {
         val g = g1 as Graphics2D
 
         g.clearRect(0, 0, width, height)
@@ -46,26 +46,26 @@ class PaintPanel() : JPanel(), MouseListener, MouseMotionListener, KeyListener {
             g.fillRect(0, 0, width, height)
         }
 
-		g.color = currentBackgroundColor
-		g.fillRect(0, 0, width, height)
+        g.color = currentBackgroundColor
+        g.fillRect(0, 0, width, height)
 
         // 図形を描画
-		paper.figures.forEach {
-			paintFigure(g, it)
-		}
+        paper.figures.forEach {
+            paintFigure(g, it)
+        }
 
         // 描画する図形のプレビュー
-		if (drawingFigure != null) {
-			paintFigure(g, drawingFigure!!)
-		}
-	}
+        if (drawingFigure != null) {
+            paintFigure(g, drawingFigure!!)
+        }
+    }
 
     // Figureを描画
-	fun paintFigure(g: Graphics2D, figure: Figure) {
-		g.color = figure.options.color
+    fun paintFigure(g: Graphics2D, figure: Figure) {
+        g.color = figure.options.color
         g.stroke = BasicStroke(figure.options.stroke.toFloat())
-		figure.reshape(g)
-	}
+        figure.reshape(g)
+    }
 
     fun undo() {
         paper.undo()
@@ -77,18 +77,18 @@ class PaintPanel() : JPanel(), MouseListener, MouseMotionListener, KeyListener {
         repaint()
     }
 
-	override fun mouseReleased(e: MouseEvent) {
-		if (drawingFigure != null) {
-			paper.pushFigure(drawingFigure!!)
+    override fun mouseReleased(e: MouseEvent) {
+        if (drawingFigure != null) {
+            paper.pushFigure(drawingFigure!!)
 
-			drawingFigure = null
-			repaint()
-		}
+            drawingFigure = null
+            repaint()
+        }
 
         requestFocus()
-	}
+    }
 
-	override fun mouseDragged(e: MouseEvent) {
+    override fun mouseDragged(e: MouseEvent) {
         if (drawingFigure != null) {
             // isOnlyVerticalLineがtrueならx座標を固定する
             if (!isOnlyVerticalLine) {
@@ -105,16 +105,16 @@ class PaintPanel() : JPanel(), MouseListener, MouseMotionListener, KeyListener {
 
             repaint()
         }
-	}
+    }
 
-	override fun mousePressed(e: MouseEvent) {
+    override fun mousePressed(e: MouseEvent) {
         if (drawingFigure == null) {
             val options = FigureOptions(currentColor, currentStroke)
             drawingFigure = createFigure(e.x, e.y, options)
         }
     }
 
-	override fun keyReleased(e: KeyEvent?) {
+    override fun keyReleased(e: KeyEvent?) {
         isOnlyVerticalLine = false
         isOnlyHorizontalLine = false
     }
@@ -128,9 +128,9 @@ class PaintPanel() : JPanel(), MouseListener, MouseMotionListener, KeyListener {
     }
 
     override fun keyTyped(e: KeyEvent?) {}
-	override fun mouseClicked(e: MouseEvent) {}
-	override fun mouseEntered(e: MouseEvent) {}
-	override fun mouseExited(e: MouseEvent) {}
+    override fun mouseClicked(e: MouseEvent) {}
+    override fun mouseEntered(e: MouseEvent) {}
+    override fun mouseExited(e: MouseEvent) {}
 
-	override fun mouseMoved(e: MouseEvent) {}
+    override fun mouseMoved(e: MouseEvent) {}
 }

@@ -5,10 +5,10 @@ import java.awt.Graphics
 
 interface Figure {
     val options: FigureOptions
-	var startX: Int
-	var startY: Int
-	var x: Int
-	var y: Int
-	
-	fun reshape(g: Graphics)
+    var startX: Int
+    var startY: Int
+    var x: Int
+    var y: Int
+    
+    fun reshape(g: Graphics)
 }
